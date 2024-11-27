@@ -1,0 +1,17 @@
+version: '3.3'
+services:
+
+  frontend:
+    container_name: sayfood-front
+    build: ../frontend
+    volumes:
+      - ../frontend/:/app/result_build/
+  nginx:
+    container_name: sayfood-proxy
+    image: nginx:1.25.4-alpine
+    ports:
+      - "8002:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ../frontend/build:/usr/share/nginx/html/
+      - ../docs/:/usr/share/nginx/html/api/docs/
