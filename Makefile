@@ -1,11 +1,16 @@
-.PHONY: all lint
-.SILENT: all lint
+.PHONY: all run lint
+.SILENT: all run lint
 
-SRC_DIR 	= ./backend
-BLACKFLAGS 	= --config pyproject.toml 
+WORKDIR     = ./backend
 
-all: lint
+BLACKFLAGS  = --config pyproject.toml
+FLAKECONFIG = --config ./setup.cfg
+
+all: lint run
+
+run:
+	poetry run docker-compose -f ./infra/docker-compose.yml up -d --build
 
 lint:
-	black $(SRC_DIR) $(BLACKFLAGS) 
-	flake8 $(SRC_DIR) || true
+	poetry run black $(WORKDIR) $(BLACKFLAGS)
+	poetry run flake8 $(WORKDIR) $(FLAKECONFIG) || true
