@@ -32,21 +32,10 @@ User = get_user_model()
 
 
 class BaseAPIRootView(APIRootView):
-    """
-    Базовые пути API приложения.
-    """
+    pass
 
 
 class UserViewSet(DjoserUserViewSet, AddDelViewMixin):
-    """
-    Работает с пользователями.
-
-    ViewSet для работы с пользователми - вывод таковых,
-    регистрация.
-    Для авторизованных пользователей —
-    возможность подписаться на автора рецепта.
-    """
-
     pagination_class = PageLimitPagination
     permission_classes = (DjangoModelPermissions,)
     add_serializer = UserSubscribeSerializer
@@ -54,20 +43,7 @@ class UserViewSet(DjoserUserViewSet, AddDelViewMixin):
 
     @action(detail=True, permission_classes=(IsAuthenticated,))
     def subscribe(self, request: WSGIRequest, id: int | str) -> Response:
-        """
-        Создаёт/удалет связь между пользователями.
-
-        Вызов метода через url: */user/<int:id>/subscribe/.
-
-        Args:
-            request (WSGIRequest): Объект запроса.
-            id (int):
-                id пользователя, на которого желает подписаться
-                или отписаться запрашивающий пользователь.
-
-        Returns:
-            Responce: Статус подтверждающий/отклоняющий действие.
-        """
+        pass
 
     @subscribe.mapping.post
     def create_subscribe(
@@ -85,19 +61,6 @@ class UserViewSet(DjoserUserViewSet, AddDelViewMixin):
         methods=("get",), detail=False, permission_classes=(IsAuthenticated,)
     )
     def subscriptions(self, request: WSGIRequest) -> Response:
-        """
-        Список подписок пользоваетеля.
-
-        Вызов метода через url: */user/<int:id>/subscribtions/.
-
-        Args:
-            request (WSGIRequest): Объект запроса.
-
-        Returns:
-            Responce:
-                401 - для неавторизованного пользователя.
-                Список подписок для авторизованного пользователя.
-        """
         pages = self.paginate_queryset(
             User.objects.filter(subscribers__user=self.request.user)
         )
@@ -106,42 +69,17 @@ class UserViewSet(DjoserUserViewSet, AddDelViewMixin):
 
 
 class TagViewSet(ReadOnlyModelViewSet):
-    """
-    Работает с тэгами.
-
-    Изменение и создание тэгов разрешено только админам.
-    """
-
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = (AdminOrReadOnly,)
 
 
 class IngredientViewSet(ReadOnlyModelViewSet):
-    """
-    Работет с игридиентами.
-
-    Изменение и создание ингридиентов разрешено только админам.
-    """
-
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     permission_classes = (AdminOrReadOnly,)
 
     def get_queryset(self) -> list[Ingredient]:
-        """
-        Получает queryset в соответствии с параметрами запроса.
-
-        Реализован поиск объектов по совпадению в начале названия,
-        также добавляются результаты по совпадению в середине.
-        При наборе названия в неправильной раскладке - латинские символы
-        преобразуются в кириллицу (для стандартной раскладки).
-        Также прописные буквы преобразуются в строчные,
-        так как все ингридиенты в базе записаны в нижнем регистре.
-
-        Returns:
-            list[Ingredient]: Список найденых ингридиентов.
-        """
         name: str = self.request.query_params.get(UrlQueries.SEARCH_ING_NAME)
         queryset = self.queryset
 
@@ -158,17 +96,6 @@ class IngredientViewSet(ReadOnlyModelViewSet):
 
 
 class RecipeViewSet(ModelViewSet, AddDelViewMixin):
-    """
-    Работает с рецептами.
-
-    Вывод, создание, редактирование, добавление/удаление
-    в избранное и список покупок.
-    Отправка текстового файла со списком покупок.
-    Для авторизованных пользователей — возможность добавить
-    рецепт в избранное и в список покупок.
-    Изменять рецепт может только автор или админы.
-    """
-
     queryset = Recipe.objects.select_related("author")
     serializer_class = RecipeSerializer
     permission_classes = (AuthorStaffOrReadOnly,)
@@ -176,12 +103,6 @@ class RecipeViewSet(ModelViewSet, AddDelViewMixin):
     add_serializer = ShortRecipeSerializer
 
     def get_queryset(self) -> QuerySet[Recipe]:
-        """
-        Получает queryset в соответствии с параметрами запроса.
-
-        Returns:
-            QuerySet[Recipe]: Список запрошенных объектов.
-        """
         queryset = self.queryset
 
         tags: list = self.request.query_params.getlist(UrlQueries.TAGS.value)
@@ -192,7 +113,6 @@ class RecipeViewSet(ModelViewSet, AddDelViewMixin):
         if author:
             queryset = queryset.filter(author=author)
 
-        # Следующие фильтры только для авторизованного пользователя
         if self.request.user.is_anonymous:
             return queryset
 
@@ -212,19 +132,7 @@ class RecipeViewSet(ModelViewSet, AddDelViewMixin):
 
     @action(detail=True, permission_classes=(IsAuthenticated,))
     def favorite(self, request: WSGIRequest, pk: int | str) -> Response:
-        """
-        Добавляет/удалет рецепт в `избранное`.
-
-        Вызов метода через url: */recipe/<int:pk>/favorite/.
-
-        Args:
-            request (WSGIRequest): Объект запроса.
-            pk (int):
-                id рецепта, который нужно добавить/удалить из `избранного`.
-
-        Returns:
-            Responce: Статус подтверждающий/отклоняющий действие.
-        """
+        pass
 
     @favorite.mapping.post
     def recipe_to_favorites(
@@ -242,18 +150,7 @@ class RecipeViewSet(ModelViewSet, AddDelViewMixin):
 
     @action(detail=True, permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request: WSGIRequest, pk: int | str) -> Response:
-        """Добавляет/удалет рецепт в `список покупок`.
-
-        Вызов метода через url: */recipe/<int:pk>/shopping_cart/.
-
-        Args:
-            request (WSGIRequest): Объект запроса.
-            pk (int):
-                id рецепта, который нужно добавить/удалить в `корзину покупок`.
-
-        Returns:
-            Responce: Статус подтверждающий/отклоняющий действие.
-        """
+        pass
 
     @shopping_cart.mapping.post
     def recipe_to_cart(self, request: WSGIRequest, pk: int | str) -> Response:
@@ -269,18 +166,6 @@ class RecipeViewSet(ModelViewSet, AddDelViewMixin):
 
     @action(methods=("get",), detail=False)
     def download_shopping_cart(self, request: WSGIRequest) -> Response:
-        """Загружает файл *.txt со списком покупок.
-
-        Считает сумму ингредиентов в рецептах выбранных для покупки.
-        Возвращает текстовый файл со списком ингредиентов.
-        Вызов метода через url:  */recipes/download_shopping_cart/.
-
-        Args:
-            request (WSGIRequest): Объект запроса..
-
-        Returns:
-            Responce: Ответ с текстовым файлом.
-        """
         user = self.request.user
         if not user.carts.exists():
             return Response(status=HTTP_400_BAD_REQUEST)

@@ -12,10 +12,6 @@ app_name = "api"
 
 
 class RuDefaultRouter(DefaultRouter):
-    """
-    Показывает описание главной страницы API на русском языке.
-    """
-
     APIRootView = BaseAPIRootView
 
 

@@ -11,34 +11,10 @@ from rest_framework.status import (
 
 
 class AddDelViewMixin:
-    """
-    Добавляет во Viewset дополнительные методы.
-
-    Содержит методы для добавления или удаления объекта связи
-    Many-to-Many между моделями.
-    Требует определения атрибутов `add_serializer` и `link_model`.
-
-    Example:
-        class ExampleViewSet(ModelViewSet, AddDelViewMixin)
-            ...
-            add_serializer = ExamplSerializer
-            link_model = M2M_Model
-    """
-
     add_serializer: ModelSerializer | None = None
     link_model: Model | None = None
 
     def _create_relation(self, obj_id: int | str) -> Response:
-        """
-        Добавляет связь M2M между объектами.
-
-        Args:
-            obj_id (int | str):
-                `id` объекта, с которым требуется создать связь.
-
-        Returns:
-            Responce: Статус подтверждающий/отклоняющий действие.
-        """
         obj = get_object_or_404(self.queryset, pk=obj_id)
         try:
             self.link_model(None, obj.pk, self.request.user.pk).save()
@@ -52,16 +28,6 @@ class AddDelViewMixin:
         return Response(serializer.data, status=HTTP_201_CREATED)
 
     def _delete_relation(self, q: Q) -> Response:
-        """
-        Удаляет связь M2M между объектами.
-
-        Args:
-            q (Q):
-                Условие фильтрации объектов.
-
-        Returns:
-            Responce: Статус подтверждающий/отклоняющий действие.
-        """
         deleted, _ = (
             self.link_model.objects.filter(q & Q(user=self.request.user))
             .first()
