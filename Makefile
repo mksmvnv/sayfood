@@ -3,7 +3,7 @@
 
 .DEFAULT_GOAL := all
 
-SOURCE := $(shell pwd)/src
+SOURCE := $(shell pwd)/backend
 CONFIG := --config pyproject.toml
 
 
