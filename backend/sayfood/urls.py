@@ -24,4 +24,12 @@ from django.conf import settings
 urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
     path(settings.API_PREFIX, include("api.urls")),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+]
+
+if settings.DEBUG:
+    urlpatterns += static(
+        settings.STATIC_URL, document_root=settings.STATIC_ROOT
+    )
+    urlpatterns += static(
+        settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
+    )
