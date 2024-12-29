@@ -32,8 +32,10 @@ DEBUG = os.getenv("DEBUG").capitalize() == "True"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS").split(",")
 
+# Admin
 ADMIN_URL = os.getenv("ADMIN_URL")
 
+# API
 API_PREFIX = os.getenv("API_PREFIX")
 
 
@@ -85,8 +87,12 @@ WSGI_APPLICATION = "sayfood.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": os.getenv("POSTGRES_ENGINE"),
+        "NAME": os.getenv("POSTGRES_DB"),
+        "USER": os.getenv("POSTGRES_USER"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD"),
+        "HOST": os.getenv("POSTGRES_HOST"),
+        "PORT": os.getenv("POSTGRES_PORT"),
     }
 }
 
@@ -125,9 +131,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "static/"
-
+STATIC_URL = "backend/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+MEDIA_URL = "backend/media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "mediafiles")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
