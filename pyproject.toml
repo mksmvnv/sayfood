@@ -5,11 +5,16 @@ description = "Gastronomic AI assistant. Let's say <food> and count the calories
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "aiohttp>=3.12.13",
+    "aiosqlite>=0.21.0",
     "fastapi>=0.115.12",
+    "pyyaml>=6.0.2",
+    "sqlalchemy[asyncio]>=2.0.41",
     "uvicorn>=0.34.3",
 ]
 
 [dependency-groups]
 dev = [
     "black>=25.1.0",
+    "pre-commit>=4.2.0",
 ]
