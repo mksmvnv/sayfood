@@ -5,7 +5,6 @@ description = "Gastronomic AI assistant. Let's say <food> and count the calories
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "aiohttp>=3.12.13",
     "aiosqlite>=0.21.0",
     "fastapi>=0.115.12",
     "pyyaml>=6.0.2",
@@ -15,6 +14,61 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "black>=25.1.0",
     "pre-commit>=4.2.0",
+    "ruff>=0.12.2",
 ]
+
+[tool.ruff]
+line-length = 79
+
+[tool.ruff.lint]
+select = [
+    "E",        # pycodestyle errors
+    "W",        # pycodestyle warnings
+    "F",        # pyflakes
+    "I",        # isort
+    "B",        # flake8-bugbear
+    "C4",       # McCabe
+    "UP",       # pyupgrade
+    "D",        # pydocstyle
+    "ANN",      # flake8-annotations
+    "T20",      # flake8-print
+    "PT",       # flake8-pytest-style
+    "SIM",      # flake8-simplify
+    "ARG",      # flake8-unused-arguments
+    "PIE",      # flake8-pie
+    "FURB",     # flake8-refurb
+    "FAST",     # flake8-fast
+    "ASYNC",    # flake8-async
+    "S",        # flake8-bandit
+    "BLE",      # flake8-blind-except
+    "COM",      # flake8-commas
+    "RSE",      # flake8-raise
+    "TD",       # flake8-todos
+    "TID252",   # flake8-tidy-imports
+    "N",        # pep8-naming
+    "PLR",      # pylint rules
+    "TRY",      # tryceratops
+    "RUF",      # ruff-specific rules
+]
+
+ignore = [
+    "D100",     # missing docstring in public module
+    "D104",     # missing docstring in public package
+    "D107",     # missing docstring in __init__
+    "RUF001",   # ambiguous Unicode character
+    "RUF002",   # ambiguous Unicode character in docstring
+    "RUF003",   # ambiguous Unicode character in comment
+    "S104",     # hardcoded bind all interfaces
+    "COM812",   # trailing comma missing
+]
+
+[tool.ruff.lint.flake8-bugbear]
+extend-immutable-calls = [
+    "fastapi.Depends",
+    "fastapi.Query",
+    "fastapi.File"
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
