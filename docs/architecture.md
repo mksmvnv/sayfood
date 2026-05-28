@@ -2,9 +2,9 @@
 
 ## System components
 
-- **Frontend** — HTML/CSS/JS, Nginx
+- **Frontend** — HTML/CSS/JS
 - **Backend** — FastAPI
-- **Database** — PostgreSQL, Redis
+- **Database** — PostgreSQL
 - **LLM Provider** — OpenRouter
 
 ## Component interaction
@@ -14,7 +14,7 @@ flowchart LR
     U[Client Browser]
 
     subgraph Frontend
-        FE[HTML/CSS/JS<br>Nginx]
+        FE[HTML/CSS/JS]
     end
 
     subgraph Backend
@@ -23,7 +23,6 @@ flowchart LR
 
     subgraph Database
         PG[(PostgreSQL)]
-        RE[(Redis)]
     end
 
     subgraph LLM[LLM Provider]
@@ -34,5 +33,14 @@ flowchart LR
     FE -->|REST API| BE
     BE -->|REST API| OR
     BE -->|SQL| PG
-    BE -->|RESP| RE
 ```
+
+1. User opens browser
+2. Frontend:
+    - serves static files (HTTPS)
+    - calls Backend (REST API)
+3. Backend:
+    - Reads/writes PostgreSQL (SQL)
+    - Calls OpenRouter for AI generation (REST API)
+4. Response returns to Frontend
+5. User sees result
