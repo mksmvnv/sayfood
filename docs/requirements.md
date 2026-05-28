@@ -29,7 +29,7 @@ Create a AI daily meal planner to help people maintain their health with ease.
 
 ## Non-Functional Requirements
 
-### Security
+### Security (Technical)
 
 - **NFR-01** — Passwords must be hashed.
 - **NFR-02** — All API endpoints except login/registration require JWT authentication.
@@ -38,7 +38,7 @@ Create a AI daily meal planner to help people maintain their health with ease.
 
 - **NFR-03** — Old meal plan requests are not stored.
 
-## Out of Scope
+## Out of Scope (for MVP)
 
 - Payment system for premium plan
 - Saving favorite meal plans
