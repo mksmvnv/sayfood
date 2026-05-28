@@ -1,5 +1,11 @@
 # /sayFood — Requirements v1.0
 
+## Changelog
+
+| Version | Date       | Changes              |
+|---------|------------|----------------------|
+| 1.0     | 2026-05-28 | Initial version      |
+
 ## Project Overview
 
 Create a AI daily meal planner to help people maintain their health with ease.
