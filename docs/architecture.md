@@ -37,8 +37,8 @@ flowchart LR
 
 1. User opens browser
 2. Frontend:
-    - serves static files (HTTPS)
-    - calls Backend (REST API)
+    - Serves static files (HTTPS)
+    - Calls Backend (REST API)
 3. Backend:
     - Reads/writes PostgreSQL (SQL)
     - Calls OpenRouter for AI generation (REST API)

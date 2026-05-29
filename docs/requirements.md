@@ -1,4 +1,4 @@
-# /sayFood — Requirements v1.0
+# Requirements
 
 ## Changelog
 
