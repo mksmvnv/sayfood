@@ -15,14 +15,14 @@ class User(AggregateRoot):
     """User aggregate."""
 
     email: Email
-    _hashed_password: HashedPassword
+    hashed_password: HashedPassword
     is_active: bool = True
     is_admin: bool = False
 
     @classmethod
     def create(cls, email: Email, hashed_password: HashedPassword) -> Self:
         """Create user."""
-        user = cls(email=email, _hashed_password=hashed_password)
+        user = cls(email=email, hashed_password=hashed_password)
 
         user.register_event(
             UserCreated(
