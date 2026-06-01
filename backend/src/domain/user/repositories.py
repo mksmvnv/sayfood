@@ -21,11 +21,11 @@ class UserRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def update(self, user: User) -> None:
-        """Update user."""
+    async def get_by_email(self, email: Email) -> User | None:
+        """Get user by email."""
         raise NotImplementedError
 
     @abstractmethod
-    async def get_by_email(self, email: Email) -> User | None:
-        """Get user by email."""
+    async def update(self, user: User) -> None:
+        """Update user."""
         raise NotImplementedError
