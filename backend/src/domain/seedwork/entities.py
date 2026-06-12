@@ -3,7 +3,7 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from uuid import UUID, uuid4
 
-from src.domain.seedwork.utils import utc_now
+from src.shared.time_utils import utc_now
 
 
 @dataclass(eq=False, kw_only=True)
