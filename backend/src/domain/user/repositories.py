@@ -16,7 +16,7 @@ class UserRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_by_id(self, id: UUID) -> User | None:
+    async def get_by_id(self, user_id: UUID) -> User | None:
         """Get user by ID."""
         raise NotImplementedError
 
@@ -28,4 +28,9 @@ class UserRepository(ABC):
     @abstractmethod
     async def update(self, user: User) -> None:
         """Update user."""
+        raise NotImplementedError
+
+    @abstractmethod
+    async def delete(self, user_id: UUID) -> None:
+        """Delete user."""
         raise NotImplementedError

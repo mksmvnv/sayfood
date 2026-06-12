@@ -1,12 +1,14 @@
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.domain.user.aggregates import User as UserAggregate
 from src.domain.user.exceptions import UserNotFound
 from src.domain.user.repositories import UserRepository
-from src.domain.user.value_objects import Email, HashedPassword
+from src.domain.user.value_objects import Email
+from src.infrastructure.database.mappers.user_mapper import user_to_domain, user_to_model
+from src.infrastructure.database.models import Session as SessionModel
 from src.infrastructure.database.models import User as UserModel
 
 
@@ -18,15 +20,15 @@ class SQLAlchemyUserRepository(UserRepository):
 
     async def add(self, user_aggregate: UserAggregate) -> None:
         """Add new user."""
-        user_model = self._to_model(user_aggregate)
+        user_model = user_to_model(user_aggregate)
         self._session.add(user_model)
 
-    async def get_by_id(self, id: UUID) -> UserAggregate | None:
+    async def get_by_id(self, user_id: UUID) -> UserAggregate | None:
         """Get user by ID."""
-        user_model = await self._session.get(UserModel, id)
+        user_model = await self._session.get(UserModel, user_id)
         if user_model is None:
             return None
-        return self._to_domain(user_model)
+        return user_to_domain(user_model)
 
     async def get_by_email(self, email: Email) -> UserAggregate | None:
         """Get user by email."""
@@ -35,7 +37,7 @@ class SQLAlchemyUserRepository(UserRepository):
         user_model = result.scalar_one_or_none()
         if user_model is None:
             return None
-        return self._to_domain(user_model)
+        return user_to_domain(user_model)
 
     async def update(self, user_aggregate: UserAggregate) -> None:
         """Update existing user."""
@@ -50,26 +52,14 @@ class SQLAlchemyUserRepository(UserRepository):
 
         self._session.add(user_model)
 
-    def _to_model(self, user_aggregate: UserAggregate) -> UserModel:
-        """Convert domain User to ORM UserModel."""
-        return UserModel(
-            id=user_aggregate.id,
-            email=user_aggregate.email.to_raw(),
-            hashed_password=user_aggregate.hashed_password.to_raw(),
-            is_active=user_aggregate.is_active,
-            is_admin=user_aggregate.is_admin,
-            created_at=user_aggregate.created_at,
-            updated_at=user_aggregate.updated_at,
-        )
+    async def delete(self, user_id: UUID) -> None:
+        """Delete user and their sessions."""
+        user_model = await self._session.get(UserModel, user_id)
+        if user_model is None:
+            raise UserNotFound()
 
-    def _to_domain(self, user_model: UserModel) -> UserAggregate:
-        """Convert ORM UserModel to domain User."""
-        return UserAggregate(
-            id=user_model.id,
-            email=Email(user_model.email),
-            hashed_password=HashedPassword(user_model.hashed_password),
-            is_active=user_model.is_active,
-            is_admin=user_model.is_admin,
-            created_at=user_model.created_at,
-            updated_at=user_model.updated_at,
-        )
+        # Delete related session token
+        stmt = delete(SessionModel).where(SessionModel.user_id == user_id)
+        await self._session.execute(stmt)
+
+        await self._session.delete(user_model)
