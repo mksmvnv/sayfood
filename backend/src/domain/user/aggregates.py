@@ -4,8 +4,11 @@ from typing import Self
 from src.domain.seedwork.aggregates import AggregateRoot
 from src.domain.user.events import (
     UserCreated,
+    UserDeleted,
+    UserEmailChanged,
     UserIsActiveChanged,
     UserIsAdminChanged,
+    UserPasswordChanged,
 )
 from src.domain.user.value_objects import Email, HashedPassword
 
@@ -41,8 +44,7 @@ class User(AggregateRoot):
         self.register_event(
             UserIsActiveChanged(
                 user_id=self.id,
-                email=self.email,
-                is_active=True,
+                is_active=self.is_active,
             )
         )
         self._touch()
@@ -55,8 +57,7 @@ class User(AggregateRoot):
         self.register_event(
             UserIsActiveChanged(
                 user_id=self.id,
-                email=self.email,
-                is_active=False,
+                is_active=self.is_active,
             )
         )
         self._touch()
@@ -69,8 +70,7 @@ class User(AggregateRoot):
         self.register_event(
             UserIsAdminChanged(
                 user_id=self.id,
-                email=self.email,
-                is_admin=True,
+                is_admin=self.is_admin,
             )
         )
         self._touch()
@@ -83,8 +83,37 @@ class User(AggregateRoot):
         self.register_event(
             UserIsAdminChanged(
                 user_id=self.id,
-                email=self.email,
-                is_admin=False,
+                is_admin=self.is_admin,
             )
         )
         self._touch()
+
+    def change_password(self, hashed_password: HashedPassword) -> None:
+        """Change user password.."""
+        self.hashed_password = hashed_password
+        self.register_event(
+            UserPasswordChanged(
+                user_id=self.id,
+            )
+        )
+        self._touch()
+
+    def change_email(self, email: Email) -> None:
+        """Change user email."""
+        self.email = email
+        self.register_event(
+            UserEmailChanged(
+                user_id=self.id,
+                email=self.email,
+            )
+        )
+        self._touch()
+
+    def delete(self) -> None:
+        """Delete user."""
+        self.register_event(
+            UserDeleted(
+                user_id=self.id,
+                email=self.email,
+            )
+        )
