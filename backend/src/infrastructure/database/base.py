@@ -3,7 +3,6 @@ from datetime import datetime
 from uuid import UUID, uuid4
 
 from sqlalchemy import DateTime, Uuid, func
-from sqlalchemy.engine import URL
 from sqlalchemy.ext.asyncio import (
     AsyncAttrs,
     AsyncSession,
@@ -18,15 +17,7 @@ from sqlalchemy.orm import (
 
 from src.infrastructure.config.settings import settings
 
-url = URL.create(
-    drivername=f"{settings.db.driver}+{settings.db.dialect}",
-    username=settings.db.user,
-    password=settings.db.password.get_secret_value(),
-    host=settings.db.host,
-    port=settings.db.port,
-    database=settings.db.name,
-)
-async_engine = create_async_engine(url=url)
+async_engine = create_async_engine(url=settings.db.url)
 
 async_session_maker = async_sessionmaker(
     bind=async_engine,
@@ -42,7 +33,7 @@ async def get_async_session() -> AsyncGenerator[AsyncSession]:
         yield session
 
 
-class Base(AsyncAttrs, DeclarativeBase):
+class BaseModel(AsyncAttrs, DeclarativeBase):
     """Base model."""
 
     __abstract__ = True
