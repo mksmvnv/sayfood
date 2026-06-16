@@ -53,3 +53,22 @@ class UserDeleted(UserChanged):
     """User deleted event."""
 
     email: Email
+
+
+@dataclass(frozen=True, kw_only=True)
+class UserSessionCreated(Event):
+    """User session created event."""
+
+    user_id: UUID
+
+
+@dataclass(frozen=True, kw_only=True)
+class UserSessionRevoked(UserSessionCreated):
+    """User session revoked event."""
+
+
+@dataclass(frozen=True, kw_only=True)
+class UserAllSessionsRevoked(UserSessionRevoked):
+    """User all sessions revoked event."""
+
+    ...
