@@ -4,10 +4,10 @@ from uuid import UUID
 from sqlalchemy import Boolean, DateTime, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.infrastructure.database.base import Base
+from src.infrastructure.database.base import BaseModel
 
 
-class User(Base):
+class UserModel(BaseModel):
     """User model."""
 
     __tablename__ = "users"
@@ -18,7 +18,7 @@ class User(Base):
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
 
-class Session(Base):
+class SessionModel(BaseModel):
     """Session model."""
 
     __tablename__ = "sessions"

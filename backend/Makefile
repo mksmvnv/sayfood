@@ -4,7 +4,10 @@ SRC ?= src
 
 # Application
 
-all: fix check
+all: fix check run
+
+run:
+	uv run uvicorn src.app:app --reload
 
 # Code quality
 
