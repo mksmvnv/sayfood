@@ -3,8 +3,7 @@ from dataclasses import dataclass
 from src.domain.seedwork.exceptions import DomainException
 
 
-# Value object exceptions
-@dataclass(eq=False, frozen=True)
+@dataclass(eq=False)
 class InvalidEmail(DomainException):
     """Raised when email is invalid."""
 
@@ -12,7 +11,7 @@ class InvalidEmail(DomainException):
     detail: str = "Invalid email"
 
 
-@dataclass(eq=False, frozen=True)
+@dataclass(eq=False)
 class InvalidHashedPassword(DomainException):
     """Raised when hashed password is invalid."""
 
@@ -20,10 +19,7 @@ class InvalidHashedPassword(DomainException):
     detail: str = "Invalid hashed password"
 
 
-# Aggregate exceptions
-
-
-@dataclass(eq=False, frozen=True)
+@dataclass(eq=False)
 class UserAlreadyActivated(DomainException):
     """Raised when user is already activated."""
 
@@ -31,7 +27,7 @@ class UserAlreadyActivated(DomainException):
     detail: str = "User is already activated"
 
 
-@dataclass(eq=False, frozen=True)
+@dataclass(eq=False)
 class UserAlreadyDeactivated(DomainException):
     """Raised when user is already deactivated."""
 
@@ -39,7 +35,7 @@ class UserAlreadyDeactivated(DomainException):
     detail: str = "User is already deactivated"
 
 
-@dataclass(eq=False, frozen=True)
+@dataclass(eq=False)
 class UserAlreadyPromoted(DomainException):
     """Raised when user is already promoted."""
 
@@ -47,7 +43,7 @@ class UserAlreadyPromoted(DomainException):
     detail: str = "User is already promoted"
 
 
-@dataclass(eq=False, frozen=True)
+@dataclass(eq=False)
 class UserAlreadyDemoted(DomainException):
     """Raised when user is already demoted."""
 
@@ -55,7 +51,7 @@ class UserAlreadyDemoted(DomainException):
     detail: str = "User is already demoted"
 
 
-@dataclass(eq=False, frozen=True)
+@dataclass(eq=False)
 class SessionAlreadyExists(DomainException):
     """Raised when session already exists."""
 
@@ -63,7 +59,7 @@ class SessionAlreadyExists(DomainException):
     detail: str = "Session already exists"
 
 
-@dataclass(eq=False, frozen=True)
+@dataclass(eq=False)
 class SessionNotFound(DomainException):
     """Raised when session not found."""
 
@@ -71,7 +67,7 @@ class SessionNotFound(DomainException):
     detail: str = "Session not found"
 
 
-@dataclass(eq=False, frozen=True)
+@dataclass(eq=False)
 class EmailAlreadySame(DomainException):
     """Raised when new email is the same as current email."""
 
@@ -80,7 +76,7 @@ class EmailAlreadySame(DomainException):
 
 
 # Infastructure exceptions
-@dataclass(eq=False, frozen=True)
+@dataclass(eq=False)
 class UserNotFound(DomainException):
     """Raised when user not found."""
 
@@ -88,9 +84,17 @@ class UserNotFound(DomainException):
     detail: str = "User not found"
 
 
-@dataclass(eq=False, frozen=True)
+@dataclass(eq=False)
 class EmailAlreadyExists(DomainException):
     """Raised when email already exists."""
 
     code: str = "email_already_exists"
     detail: str = "Email already exists"
+
+
+@dataclass(eq=False)
+class InvalidPassword(DomainException):
+    """Raised when password is invalid."""
+
+    code: str = "invalid_password"
+    detail: str = "Invalid password"
