@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 
-@dataclass(eq=False, frozen=True)
+@dataclass(eq=False)
 class DomainException(Exception):
     """Base domain exception."""
 
@@ -13,7 +13,7 @@ class DomainException(Exception):
         return self.detail
 
 
-@dataclass(eq=False, frozen=True)
+@dataclass(eq=False)
 class InvalidDomainEvent(DomainException):
     """Raised when provided domain event does not inherit Event."""
 

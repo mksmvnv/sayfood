@@ -6,12 +6,16 @@ from src.domain.user.exceptions import (
     EmailAlreadyExists,
     InvalidEmail,
     InvalidHashedPassword,
+    InvalidPassword,
+    UserNotFound,
 )
 
 EXCEPTION_STATUS_MAP = {
     InvalidEmail: 422,
     InvalidHashedPassword: 422,
     EmailAlreadyExists: 409,
+    InvalidPassword: 401,
+    UserNotFound: 404,
 }
 
 
