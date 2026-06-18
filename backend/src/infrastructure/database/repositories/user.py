@@ -21,15 +21,7 @@ class SQLAlchemyUserRepository(UserRepository):
         """Add new user."""
         user_model = user_to_model(user_aggregate)
         self._session.add(user_model)
-
-        for session in user_aggregate.sessions:
-            self._session.add(
-                SessionModel(
-                    token=session.token,
-                    user_id=user_aggregate.id,
-                    expires_at=session.expires_at,
-                )
-            )
+        await self._session.commit()
 
     async def get_by_id(self, user_id: UUID) -> UserAggregate | None:
         """Get user by ID."""
@@ -84,6 +76,8 @@ class SQLAlchemyUserRepository(UserRepository):
                 )
             )
 
+        await self._session.commit()
+
     async def delete(self, user_id: UUID) -> None:
         """Delete user and his sessions."""
         session_stmt = delete(SessionModel).where(SessionModel.user_id == user_id)
@@ -93,3 +87,4 @@ class SQLAlchemyUserRepository(UserRepository):
         if user_model is None:
             raise UserNotFound()
         await self._session.delete(user_model)
+        await self._session.commit()
