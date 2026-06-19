@@ -1,4 +1,5 @@
 from .user_login import UserLoginUseCase
+from .user_logout import UserLogoutUseCase
 from .user_register import UserRegisterUseCase
 
-__all__ = ["UserRegisterUseCase", "UserLoginUseCase"]
+__all__ = ["UserRegisterUseCase", "UserLoginUseCase", "UserLogoutUseCase"]

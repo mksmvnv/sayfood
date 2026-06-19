@@ -38,7 +38,7 @@ class UserLoginUseCase:
             expires_at=utc_now() + timedelta(days=7),
         )
 
-        # Save user to database
+        # Update user in database
         await self.user_repository.update(user)
 
         return UserLoginDTO(id=user.id, email=user.email, session_token=session_token)

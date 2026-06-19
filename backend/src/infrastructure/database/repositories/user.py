@@ -17,6 +17,12 @@ class SQLAlchemyUserRepository(UserRepository):
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
 
+    async def _get_session_models(self, user_id: UUID) -> list[SessionModel]:
+        """Get all session models for a user."""
+        stmt = select(SessionModel).where(SessionModel.user_id == user_id)
+        result = await self._session.execute(stmt)
+        return list(result.scalars().all())
+
     async def add(self, user_aggregate: UserAggregate) -> None:
         """Add new user."""
         user_model = user_to_model(user_aggregate)
@@ -29,10 +35,7 @@ class SQLAlchemyUserRepository(UserRepository):
         if user_model is None:
             return None
 
-        session_stmt = select(SessionModel).where(SessionModel.user_id == user_id)
-        session_result = await self._session.execute(session_stmt)
-        session_models = list(session_result.scalars().all())
-
+        session_models = await self._get_session_models(user_id)
         return user_to_domain(user_model, session_models)
 
     async def get_by_email(self, email: Email) -> UserAggregate | None:
@@ -44,10 +47,23 @@ class SQLAlchemyUserRepository(UserRepository):
         if user_model is None:
             return None
 
-        session_stmt = select(SessionModel).where(SessionModel.user_id == user_model.id)
-        session_result = await self._session.execute(session_stmt)
-        session_models = list(session_result.scalars().all())
+        session_models = await self._get_session_models(user_model.id)
+        return user_to_domain(user_model, session_models)
 
+    async def get_by_session_token(self, session_token: str) -> UserAggregate | None:
+        """Get user by session token."""
+        session_stmt = select(SessionModel).where(SessionModel.token == session_token)
+        session_result = await self._session.execute(session_stmt)
+        session_model = session_result.scalar_one_or_none()
+
+        if session_model is None:
+            return None
+
+        user_model = await self._session.get(UserModel, session_model.user_id)
+        if user_model is None:
+            return None
+
+        session_models = await self._get_session_models(user_model.id)
         return user_to_domain(user_model, session_models)
 
     async def update(self, user_aggregate: UserAggregate) -> None:
@@ -80,8 +96,7 @@ class SQLAlchemyUserRepository(UserRepository):
 
     async def delete(self, user_id: UUID) -> None:
         """Delete user and his sessions."""
-        session_stmt = delete(SessionModel).where(SessionModel.user_id == user_id)
-        await self._session.execute(session_stmt)
+        await self._session.execute(delete(SessionModel).where(SessionModel.user_id == user_id))
 
         user_model = await self._session.get(UserModel, user_id)
         if user_model is None:

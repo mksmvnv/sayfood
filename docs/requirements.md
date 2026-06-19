@@ -2,9 +2,12 @@
 
 ## Changelog
 
-| Version | Date       | Changes              |
-|---------|------------|----------------------|
-| 1.0     | 2026-05-28 | Initial version      |
+| Version | Date       | Changes                                    |
+|---------|------------|--------------------------------------------|
+| 0.1.0   | 2026-05-28 | Initial version                            |
+| 0.2.0   | 2026-06-16 | Completed US-01                            |
+| 0.3.0   | 2026-06-18 | Completed US-02 , US-08, NFR-01, NFR-02    |
+| 0.4.0   | 2026-06-19 | Completed US-03                            |
 
 ## Project Overview
 
@@ -14,9 +17,9 @@ Create a AI daily meal planner to help people maintain their health with ease.
 
 ### Authentication
 
-- **US-01** — As a user, I want to register using email and password.
-- **US-02** — As a user, I want to log in with my credentials.
-- **US-03** — As a user, I want to log out.
+- **US-01** — As a user, I want to register using email and password. ✅
+- **US-02** — As a user, I want to log in with my credentials. ✅
+- **US-03** — As a user, I want to log out. ✅
 
 ### Meal Plan Generation
 
@@ -30,15 +33,15 @@ Create a AI daily meal planner to help people maintain their health with ease.
 
 ### Security
 
-- **US-08** — As a user, my password must be stored securely.
+- **US-08** — As a user, my password must be stored securely. ✅
 - **US-09** — As a user, I cannot access the generation feature without logging in.
 
 ## Non-Functional Requirements
 
 ### Security (Technical)
 
-- **NFR-01** — Passwords must be hashed.
-- **NFR-02** — All API endpoints except login/registration require JWT authentication.
+- **NFR-01** — Passwords must be hashed. ✅
+- **NFR-02** — All API endpoints except login/registration require session authentication. ✅
 
 ### Data
 
