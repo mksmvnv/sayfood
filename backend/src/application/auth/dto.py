@@ -17,3 +17,10 @@ class UserLoginDTO(UserRegisterDTO):
     """User login DTO."""
 
     session_token: str
+
+
+@dataclass
+class UserLogoutDTO:
+    """User logout DTO."""
+
+    ...
