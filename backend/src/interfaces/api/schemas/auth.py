@@ -28,3 +28,9 @@ class UserLoginResponse(UserRegisterResponse):
     """User login response schema."""
 
     session_token: str
+
+
+class UserLogoutResponse(BaseModel):
+    """User logout response schema."""
+
+    status: str = "logged out"
