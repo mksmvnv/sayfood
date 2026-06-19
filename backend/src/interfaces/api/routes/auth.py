@@ -1,13 +1,18 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Request, Response
 
-from src.application.auth import UserLoginUseCase, UserRegisterUseCase
+from src.application.auth import UserLoginUseCase, UserLogoutUseCase, UserRegisterUseCase
 from src.infrastructure.config.settings import settings
-from src.interfaces.api.dependencies import get_user_login_use_case, get_user_register_use_case
+from src.interfaces.api.dependencies import (
+    get_user_login_use_case,
+    get_user_logout_use_case,
+    get_user_register_use_case,
+)
 from src.interfaces.api.schemas.auth import (
     UserLoginRequest,
     UserLoginResponse,
+    UserLogoutResponse,
     UserRegisterRequest,
     UserRegisterResponse,
 )
@@ -52,3 +57,17 @@ async def login(
         status="logged in",
         session_token=user_login_dto.session_token,
     )
+
+
+@router.post("/logout", response_model=UserLogoutResponse)
+async def logout(
+    user_logout_use_case: Annotated[UserLogoutUseCase, Depends(get_user_logout_use_case)],
+    request: Request,
+    response: Response,
+) -> UserLogoutResponse:
+    """Logout user."""
+    session_name = settings.cookie.name
+    session_token = request.cookies.get(session_name)
+    await user_logout_use_case.execute(session_token)
+    response.delete_cookie(session_name)
+    return UserLogoutResponse()
