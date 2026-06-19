@@ -26,6 +26,11 @@ class UserRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    async def get_by_session_token(self, session_token: str) -> UserAggregate | None:
+        """Get user by session token."""
+        raise NotImplementedError
+
+    @abstractmethod
     async def update(self, user: UserAggregate) -> None:
         """Update user."""
         raise NotImplementedError
