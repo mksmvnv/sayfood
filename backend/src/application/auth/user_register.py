@@ -1,7 +1,7 @@
 from src.application.auth.dto import UserRegisterDTO
-from src.domain import UserRepository
 from src.domain.user.aggregates import UserAggregate
 from src.domain.user.exceptions import EmailAlreadyExists
+from src.domain.user.repositories import UserRepository
 from src.domain.user.value_objects import Email
 from src.infrastructure.auth.hasher import PasswordHasher
 
