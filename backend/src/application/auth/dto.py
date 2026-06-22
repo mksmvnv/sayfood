@@ -24,3 +24,17 @@ class UserLogoutDTO:
     """User logout DTO."""
 
     ...
+
+
+@dataclass
+class UserChangePasswordDTO:
+    """User change password DTO."""
+
+    ...
+
+
+@dataclass
+class UserChangeEmailDTO:
+    """User change email DTO."""
+
+    ...

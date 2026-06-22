@@ -93,8 +93,24 @@ class EmailAlreadyExists(DomainException):
 
 
 @dataclass(eq=False)
-class InvalidPassword(DomainException):
-    """Raised when password is invalid."""
+class PasswordAlreadySame(DomainException):
+    """Raised when new password is the same as current password."""
 
-    code: str = "invalid_password"
-    detail: str = "Invalid password"
+    code: str = "password_already_same"
+    detail: str = "New password is the same as current password"
+
+
+@dataclass(eq=False)
+class InvalidCredentials(DomainException):
+    """Raised when credentials are invalid."""
+
+    code: str = "invalid_credentials"
+    detail: str = "Invalid credentials"
+
+
+@dataclass(eq=False)
+class UserInactive(DomainException):
+    """Raised when user is inactive."""
+
+    code: str = "user_inactive"
+    detail: str = "User is blocked or inactive. Contact support."

@@ -1,6 +1,6 @@
 from src.application.auth.dto import UserLogoutDTO
-from src.domain import UserRepository
 from src.domain.user.exceptions import SessionNotFound, UserNotFound
+from src.domain.user.repositories import UserRepository
 
 
 class UserLogoutUseCase:

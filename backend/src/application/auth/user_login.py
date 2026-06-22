@@ -1,8 +1,8 @@
 from datetime import timedelta
 
 from src.application.auth.dto import UserLoginDTO
-from src.domain import UserRepository
-from src.domain.user.exceptions import InvalidPassword, UserNotFound
+from src.domain.user.exceptions import InvalidCredentials, UserInactive, UserNotFound
+from src.domain.user.repositories import UserRepository
 from src.domain.user.value_objects import Email
 from src.infrastructure.auth.hasher import PasswordHasher
 from src.infrastructure.auth.session import generate_session_token
@@ -27,9 +27,13 @@ class UserLoginUseCase:
         if not user:
             raise UserNotFound()
 
+        # Check if user is active
+        if not user.is_active:
+            raise UserInactive()
+
         # Verify password
         if not self.password_hasher.verify(password, user.hashed_password):
-            raise InvalidPassword()
+            raise InvalidCredentials()
 
         # Create session and add to user
         session_token = generate_session_token()

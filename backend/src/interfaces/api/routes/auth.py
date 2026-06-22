@@ -2,14 +2,26 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, Request, Response
 
-from src.application.auth import UserLoginUseCase, UserLogoutUseCase, UserRegisterUseCase
+from src.application.auth import (
+    UserChangeEmailUseCase,
+    UserChangePasswordUseCase,
+    UserLoginUseCase,
+    UserLogoutUseCase,
+    UserRegisterUseCase,
+)
 from src.infrastructure.config.settings import settings
 from src.interfaces.api.dependencies import (
+    get_user_change_email_use_case,
+    get_user_change_password_use_case,
     get_user_login_use_case,
     get_user_logout_use_case,
     get_user_register_use_case,
 )
 from src.interfaces.api.schemas.auth import (
+    UserChangeEmailRequest,
+    UserChangeEmailResponse,
+    UserChangePasswordRequest,
+    UserChangePasswordResponse,
     UserLoginRequest,
     UserLoginResponse,
     UserLogoutResponse,
@@ -71,3 +83,45 @@ async def logout(
     await user_logout_use_case.execute(session_token)
     response.delete_cookie(session_name)
     return UserLogoutResponse()
+
+
+@router.post("/me/password", response_model=UserChangePasswordResponse)
+async def change_password(
+    user_change_password_schema: UserChangePasswordRequest,
+    user_change_password_use_case: Annotated[
+        UserChangePasswordUseCase, Depends(get_user_change_password_use_case)
+    ],
+    request: Request,
+    response: Response,
+) -> UserChangePasswordResponse:
+    """Change user password."""
+    session_name = settings.cookie.name
+    session_token = request.cookies.get(session_name)
+    await user_change_password_use_case.execute(
+        session_token,
+        user_change_password_schema.old_password,
+        user_change_password_schema.new_password,
+    )
+    response.delete_cookie(session_name)
+    return UserChangePasswordResponse()
+
+
+@router.post("/me/email", response_model=UserChangeEmailResponse)
+async def change_email(
+    user_change_email_schema: UserChangeEmailRequest,
+    user_change_email_use_case: Annotated[
+        UserChangeEmailUseCase, Depends(get_user_change_email_use_case)
+    ],
+    request: Request,
+    response: Response,
+) -> UserChangeEmailResponse:
+    """Change user email."""
+    session_name = settings.cookie.name
+    session_token = request.cookies.get(session_name)
+    await user_change_email_use_case.execute(
+        session_token,
+        user_change_email_schema.old_email,
+        user_change_email_schema.new_email,
+    )
+    response.delete_cookie(session_name)
+    return UserChangeEmailResponse()
