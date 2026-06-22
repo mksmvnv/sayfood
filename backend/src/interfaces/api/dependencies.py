@@ -3,7 +3,13 @@ from typing import Annotated
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.application.auth import UserLoginUseCase, UserLogoutUseCase, UserRegisterUseCase
+from src.application.auth import (
+    UserChangeEmailUseCase,
+    UserChangePasswordUseCase,
+    UserLoginUseCase,
+    UserLogoutUseCase,
+    UserRegisterUseCase,
+)
 from src.infrastructure.auth.hasher import PasswordHasher
 from src.infrastructure.database.base import get_async_session
 from src.infrastructure.database.repositories.user import SQLAlchemyUserRepository
@@ -33,3 +39,20 @@ async def get_user_logout_use_case(
     """Get user logout use case."""
     user_repository = SQLAlchemyUserRepository(session)
     return UserLogoutUseCase(user_repository)
+
+
+async def get_user_change_password_use_case(
+    session: Annotated[AsyncSession, Depends(get_async_session)],
+) -> UserChangePasswordUseCase:
+    """Get user change password use case."""
+    user_repository = SQLAlchemyUserRepository(session)
+    password_hasher = PasswordHasher()
+    return UserChangePasswordUseCase(user_repository, password_hasher)
+
+
+async def get_user_change_email_use_case(
+    session: Annotated[AsyncSession, Depends(get_async_session)],
+) -> UserChangeEmailUseCase:
+    """Get user change email use case."""
+    user_repository = SQLAlchemyUserRepository(session)
+    return UserChangeEmailUseCase(user_repository)
