@@ -17,9 +17,9 @@ class ValueObject[VT](ABC):
     @abstractmethod
     def validate(self) -> None:
         """Validate value object."""
-        raise NotImplementedError
+        raise NotImplementedError()
 
     @abstractmethod
     def to_raw(self) -> VT:
         """Return raw value."""
-        raise NotImplementedError
+        raise NotImplementedError()
