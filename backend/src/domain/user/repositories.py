@@ -13,29 +13,29 @@ class UserRepository(ABC):
     @abstractmethod
     async def add(self, user: UserAggregate) -> None:
         """Add new user."""
-        raise NotImplementedError
+        raise NotImplementedError()
 
     @abstractmethod
     async def get_by_id(self, user_id: UUID) -> UserAggregate | None:
         """Get user by ID."""
-        raise NotImplementedError
+        raise NotImplementedError()
 
     @abstractmethod
     async def get_by_email(self, email: Email) -> UserAggregate | None:
         """Get user by email."""
-        raise NotImplementedError
+        raise NotImplementedError()
 
     @abstractmethod
     async def get_by_session_token(self, session_token: str) -> UserAggregate | None:
         """Get user by session token."""
-        raise NotImplementedError
+        raise NotImplementedError()
 
     @abstractmethod
     async def update(self, user: UserAggregate) -> None:
         """Update user."""
-        raise NotImplementedError
+        raise NotImplementedError()
 
     @abstractmethod
     async def delete(self, user_id: UUID) -> None:
         """Delete user."""
-        raise NotImplementedError
+        raise NotImplementedError()
