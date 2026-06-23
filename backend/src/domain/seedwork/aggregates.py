@@ -14,7 +14,7 @@ class AggregateRoot(Entity):
     def register_event(self, event: Event) -> None:
         """Register domain event."""
         if not isinstance(event, Event):
-            raise InvalidDomainEvent
+            raise InvalidDomainEvent()
         self._events.append(event)
 
     def pull_events(self) -> list[Event]:
