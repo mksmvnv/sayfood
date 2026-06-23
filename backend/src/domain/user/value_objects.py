@@ -14,7 +14,7 @@ class Email(ValueObject[str]):
     def validate(self) -> None:
         """Validate email."""
         if not re.match(r"^[^@]+@[^@]+\.[^@]+$", self.value):
-            raise InvalidEmail
+            raise InvalidEmail()
 
     def to_raw(self) -> str:
         """Return raw value."""
@@ -30,7 +30,7 @@ class HashedPassword(ValueObject[str]):
     def validate(self) -> None:
         """Validate hashed password."""
         if not self.value:
-            raise InvalidHashedPassword
+            raise InvalidHashedPassword()
 
     def to_raw(self) -> str:
         """Return raw value."""

@@ -9,6 +9,7 @@ from src.domain.user.repositories import UserRepository
 from src.domain.user.value_objects import Email
 from src.infrastructure.database.mappers.user import user_to_domain, user_to_model
 from src.infrastructure.database.models import SessionModel, UserModel
+from src.shared.time_utils import utc_now
 
 
 class SQLAlchemyUserRepository(UserRepository):
@@ -56,7 +57,7 @@ class SQLAlchemyUserRepository(UserRepository):
         session_result = await self._session.execute(session_stmt)
         session_model = session_result.scalar_one_or_none()
 
-        if session_model is None:
+        if session_model is None or session_model.expires_at < utc_now():
             return None
 
         user_model = await self._session.get(UserModel, session_model.user_id)
