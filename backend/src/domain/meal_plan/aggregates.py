@@ -2,13 +2,13 @@ from dataclasses import dataclass
 from typing import Self
 from uuid import UUID
 
-from src.domain.meal.events import MealPlanCreated
-from src.domain.meal.value_objects import Goal, HealthParams
+from src.domain.meal_plan.events import MealPlanCreated
+from src.domain.meal_plan.value_objects import Goal, HealthParams
 from src.domain.seedwork.aggregates import AggregateRoot
 
 
 @dataclass(eq=False, kw_only=True)
-class MealPlan(AggregateRoot):
+class MealPlanAggregate(AggregateRoot):
     """Meal plan aggregate."""
 
     user_id: UUID

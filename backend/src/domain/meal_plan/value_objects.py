@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from enum import StrEnum
 from typing import Any
 
-from src.domain.meal.exceptions import (
+from src.domain.meal_plan.exceptions import (
     InvalidActivityLevel,
     InvalidAge,
     InvalidGoal,
@@ -49,7 +49,7 @@ class Goal(ValueObject[str]):
 
 
 @dataclass(frozen=True)
-class HealthParams(ValueObject[dict[str, Any]]):
+class HealthParams:
     """Health parameters value object."""
 
     weight: float

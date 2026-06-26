@@ -41,3 +41,11 @@ class InvalidActivityLevel(DomainException):
 
     code: str = "invalid_activity_level"
     detail: str = "Invalid activity level"
+
+
+@dataclass(eq=False)
+class MealPlanNotFound(DomainException):
+    """Raised when meal plan not found."""
+
+    code: str = "meal_plan_not_found"
+    detail: str = "Meal plan not found"
