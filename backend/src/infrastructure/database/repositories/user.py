@@ -75,8 +75,11 @@ class SQLAlchemyUserRepository(UserRepository):
 
         user_model.email = user_aggregate.email.to_raw()
         user_model.hashed_password = user_aggregate.hashed_password.to_raw()
+        user_model.daily_requests = user_aggregate.daily_requests
+        user_model.last_request_date = user_aggregate.last_request_date
         user_model.is_active = user_aggregate.is_active
         user_model.is_admin = user_aggregate.is_admin
+        user_model.is_premium = user_aggregate.is_premium
 
         # Delete old sessions
         await self._session.execute(
