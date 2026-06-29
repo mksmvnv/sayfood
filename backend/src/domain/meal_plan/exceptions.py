@@ -44,8 +44,32 @@ class InvalidActivityLevel(DomainException):
 
 
 @dataclass(eq=False)
+class InvalidAllergen(DomainException):
+    """Raised when allergen is invalid."""
+
+    code: str = "invalid_allergen"
+    detail: str = "Invalid allergen"
+
+
+@dataclass(eq=False)
+class InvalidRestriction(DomainException):
+    """Raised when restriction is invalid."""
+
+    code: str = "invalid_restriction"
+    detail: str = "Invalid restriction"
+
+
+@dataclass(eq=False)
 class MealPlanNotFound(DomainException):
     """Raised when meal plan not found."""
 
     code: str = "meal_plan_not_found"
     detail: str = "Meal plan not found"
+
+
+@dataclass(eq=False)
+class MealPlanGenerationError(DomainException):
+    """Raised when meal plan generation fails."""
+
+    code: str = "meal_plan_generation_error"
+    detail: str = "Failed to generate meal plan"

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import date, datetime
 from typing import Self
 
 from src.domain.seedwork.aggregates import AggregateRoot
@@ -26,6 +26,8 @@ from src.domain.user.exceptions import (
 )
 from src.domain.user.value_objects import Email, HashedPassword
 
+DAILY_LIMIT = 3
+
 
 @dataclass(eq=False, kw_only=True)
 class UserAggregate(AggregateRoot):
@@ -35,6 +37,9 @@ class UserAggregate(AggregateRoot):
     hashed_password: HashedPassword
     is_active: bool = True
     is_admin: bool = False
+    daily_requests: int = 0
+    last_request_date: date | None = None
+    is_premium: bool = False
     _sessions: list[SessionEntity] = field(default_factory=list, init=False)
 
     @classmethod
@@ -183,3 +188,23 @@ class UserAggregate(AggregateRoot):
             )
         )
         self._touch()
+
+    def can_generate_today(self) -> bool:
+        """Check generation limit."""
+        if self.is_premium or self.is_admin:
+            return True
+        today = date.today()
+        if self.last_request_date != today:
+            return True
+        return self.daily_requests < DAILY_LIMIT
+
+    def increment_requests(self) -> None:
+        """Increment amount of requests."""
+        today = date.today()
+        if self.last_request_date != today:
+            self.daily_requests = 1
+            self.last_request_date = today
+            self._touch()
+        else:
+            self.daily_requests += 1
+            self._touch()

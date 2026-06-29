@@ -1,4 +1,4 @@
-.PHONY: fix check
+.PHONY: fix check run all migrate upgrade downgrade
 
 SRC ?= src
 
@@ -8,6 +8,17 @@ all: fix check run
 
 run:
 	uv run uvicorn src.app:app --reload
+
+# Database
+
+migrate:
+	alembic revision --autogenerate -m "$(m)"
+
+upgrade:
+	alembic upgrade head
+
+downgrade:
+	alembic downgrade -1
 
 # Code quality
 

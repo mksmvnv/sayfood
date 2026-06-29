@@ -11,19 +11,6 @@ class ApplicationSettings(BaseModel):
     title: str
 
 
-class DatabaseSettings(BaseModel):
-    """Database settings."""
-
-    driver: str
-    dialect: str
-    user: str
-    password: SecretStr
-    host: str
-    port: int
-    name: str
-    url: str
-
-
 class CookieSettings(BaseModel):
     """Cookie settings."""
 
@@ -32,12 +19,35 @@ class CookieSettings(BaseModel):
     max_age: int  # Seconds
 
 
+class DatabaseSettings(BaseModel):
+    """Database settings."""
+
+    url: SecretStr
+    driver: str
+    dialect: str
+    user: str
+    password: SecretStr
+    host: str
+    port: int
+    name: str
+
+
+class LLMProviderSettings(BaseModel):
+    """LLM Provider settings."""
+
+    url: str
+    api_key: SecretStr
+    model: str
+    timeout: int  # Seconds
+
+
 class Settings(BaseModel):
     """Main settings."""
 
     app: ApplicationSettings
-    db: DatabaseSettings
     cookie: CookieSettings
+    db: DatabaseSettings
+    llm: LLMProviderSettings
 
 
 def get_settings() -> Settings:

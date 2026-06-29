@@ -17,7 +17,7 @@ from sqlalchemy.orm import (
 
 from src.infrastructure.config.settings import settings
 
-async_engine = create_async_engine(url=settings.db.url)
+async_engine = create_async_engine(url=settings.db.url.get_secret_value())
 
 async_session_maker = async_sessionmaker(
     bind=async_engine,

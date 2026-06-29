@@ -114,3 +114,11 @@ class UserInactive(DomainException):
 
     code: str = "user_inactive"
     detail: str = "User is blocked or inactive. Contact support."
+
+
+@dataclass(eq=False)
+class DailyLimitReached(DomainException):
+    """Raised when user daily limit was reached."""
+
+    code: str = "daily_limit_reached"
+    detail: str = "Daily limit of 3 meal plans reached"

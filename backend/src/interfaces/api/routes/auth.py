@@ -29,7 +29,7 @@ from src.interfaces.api.schemas.auth import (
     UserRegisterResponse,
 )
 
-router = APIRouter(prefix="/auth", tags=["auth"])
+router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
 @router.post("/register", response_model=UserRegisterResponse)
