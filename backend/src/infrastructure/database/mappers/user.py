@@ -11,6 +11,9 @@ def user_to_model(user_aggregate: UserAggregate) -> UserModel:
         hashed_password=user_aggregate.hashed_password.to_raw(),
         is_active=user_aggregate.is_active,
         is_admin=user_aggregate.is_admin,
+        daily_requests=user_aggregate.daily_requests,
+        last_request_date=user_aggregate.last_request_date,
+        is_premium=user_aggregate.is_premium,
         created_at=user_aggregate.created_at,
         updated_at=user_aggregate.updated_at,
     )
@@ -27,6 +30,9 @@ def user_to_domain(
         hashed_password=HashedPassword(user_model.hashed_password),
         is_active=user_model.is_active,
         is_admin=user_model.is_admin,
+        daily_requests=user_model.daily_requests,
+        last_request_date=user_model.last_request_date,
+        is_premium=user_model.is_premium,
         created_at=user_model.created_at,
         updated_at=user_model.updated_at,
     )
