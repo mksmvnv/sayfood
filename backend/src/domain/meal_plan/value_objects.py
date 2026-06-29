@@ -5,8 +5,10 @@ from typing import Any
 from src.domain.meal_plan.exceptions import (
     InvalidActivityLevel,
     InvalidAge,
+    InvalidAllergen,
     InvalidGoal,
     InvalidHeight,
+    InvalidRestriction,
     InvalidWeight,
 )
 from src.domain.seedwork.value_objects import ValueObject
@@ -28,8 +30,36 @@ class ActivityLevelType(StrEnum):
     HIGH = "high"
 
 
+class AllergenType(StrEnum):
+    """Common allergens enum."""
+
+    MILK = "milk"
+    EGGS = "eggs"
+    PEANUTS = "peanuts"
+    TREE_NUTS = "tree_nuts"
+    SESAME = "sesame"
+    FISH = "fish"
+    SHELLFISH = "shellfish"
+    WHEAT = "wheat"
+    SOY = "soy"
+
+
+class RestrictionType(StrEnum):
+    """Common dietary restrictions enum."""
+
+    VEGETARIAN = "vegetarian"
+    VEGAN = "vegan"
+    GLUTEN_FREE = "gluten_free"
+    LACTOSE_FREE = "lactose_free"
+    KETO = "keto"
+    HALAL = "halal"
+    KOSHER = "kosher"
+
+
 VALID_GOALS = {g.value for g in GoalType}
 VALID_ACTIVITY_LEVELS = {al.value for al in ActivityLevelType}
+VALID_ALLERGENS = {a.value for a in AllergenType}
+VALID_RESTRICTIONS = {r.value for r in RestrictionType}
 
 
 @dataclass(frozen=True)
@@ -56,8 +86,8 @@ class HealthParams:
     height: float
     age: int
     activity_level: ActivityLevelType
-    allergies: list[str] | None = None
-    restrictions: list[str] | None = None
+    allergies: list[AllergenType] | None = None
+    restrictions: list[RestrictionType] | None = None
 
     def validate(self) -> None:
         """Validate health params."""
@@ -69,6 +99,14 @@ class HealthParams:
             raise InvalidAge()
         if self.activity_level.value not in VALID_ACTIVITY_LEVELS:
             raise InvalidActivityLevel()
+        if self.allergies:
+            for allergen in self.allergies:
+                if allergen.value not in VALID_ALLERGENS:
+                    raise InvalidAllergen()
+        if self.restrictions:
+            for restriction in self.restrictions:
+                if restriction.value not in VALID_RESTRICTIONS:
+                    raise InvalidRestriction()
 
     def to_raw(self) -> dict[str, Any]:
         """Return raw value."""
@@ -77,6 +115,6 @@ class HealthParams:
             "height": self.height,
             "age": self.age,
             "activity_level": self.activity_level.value,
-            "allergies": self.allergies or [],
-            "restrictions": self.restrictions or [],
+            "allergies": [a.value for a in self.allergies] if self.allergies else [],
+            "restrictions": [r.value for r in self.restrictions] if self.restrictions else [],
         }
