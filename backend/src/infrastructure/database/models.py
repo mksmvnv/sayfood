@@ -1,7 +1,7 @@
-from datetime import datetime
+from datetime import date, datetime
 from uuid import UUID
 
-from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, Text
+from sqlalchemy import Boolean, Date, DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.infrastructure.database.base import BaseModel
@@ -14,8 +14,11 @@ class UserModel(BaseModel):
 
     email: Mapped[str] = mapped_column(String, unique=True, index=True)
     hashed_password: Mapped[str] = mapped_column(String)
+    daily_requests: Mapped[int] = mapped_column(Integer, default=0)
+    last_request_date: Mapped[date | None] = mapped_column(Date, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_premium: Mapped[bool] = mapped_column(Boolean, default=False)
 
 
 class SessionModel(BaseModel):
@@ -29,7 +32,7 @@ class SessionModel(BaseModel):
 
 
 class MealPlanModel(BaseModel):
-    """Meal plan ORM model."""
+    """Meal plan model."""
 
     __tablename__ = "meal_plans"
 
