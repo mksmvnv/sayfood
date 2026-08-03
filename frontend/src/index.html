@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SayFood — AI-планировщик питания</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+    <!-- Auth overlay -->
+    <div id="authOverlay" class="auth-overlay">
+      <div class="auth-card">
+        <div class="auth-card__brand">
+          <div class="logo-mark" aria-hidden="true">SF</div>
+          <h1>SayFood</h1>
+          <p>Персональный план питания на каждый день — с учётом целей и ограничений</p>
+        </div>
+
+        <div class="auth-buttons">
+          <button id="showLoginBtn" class="btn btn--primary btn--block">Войти</button>
+          <button id="showRegisterBtn" class="btn btn--ghost btn--block">Создать аккаунт</button>
+        </div>
+
+        <div id="loginForm" class="auth-form hidden">
+          <label class="field">
+            <span>Email</span>
+            <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email" />
+          </label>
+          <label class="field">
+            <span>Пароль</span>
+            <input type="password" id="loginPassword" placeholder="••••••••" autocomplete="current-password" />
+          </label>
+          <button id="loginBtn" class="btn btn--primary btn--block">Войти</button>
+          <p class="auth-switch">
+            Нет аккаунта? <a href="#" id="switchToRegister">Зарегистрироваться</a>
+          </p>
+        </div>
+
+        <div id="registerForm" class="auth-form hidden">
+          <label class="field">
+            <span>Email</span>
+            <input type="email" id="registerEmail" placeholder="you@example.com" autocomplete="email" />
+          </label>
+          <label class="field">
+            <span>Пароль</span>
+            <input type="password" id="registerPassword" placeholder="••••••••" autocomplete="new-password" />
+          </label>
+          <button id="registerBtn" class="btn btn--primary btn--block">Зарегистрироваться</button>
+          <p class="auth-switch">
+            Уже есть аккаунт? <a href="#" id="switchToLogin">Войти</a>
+          </p>
+        </div>
+
+        <div id="authMessage" class="auth-message"></div>
+      </div>
+    </div>
+
+    <!-- Main app -->
+    <div id="app" class="app hidden">
+      <header class="topbar">
+        <div class="topbar__brand">
+          <div class="logo-mark logo-mark--sm" aria-hidden="true">SF</div>
+          <div>
+            <strong>SayFood</strong>
+            <span class="topbar__tagline">AI meal planner</span>
+          </div>
+        </div>
+
+        <div class="topbar__actions">
+          <div class="quota-badge" title="Осталось генераций сегодня">
+            <span class="quota-badge__label">Генерации</span>
+            <span id="requestsRemaining" class="quota-badge__value">—</span>
+          </div>
+          <span id="userEmailDisplay" class="user-email"></span>
+          <button id="showProfileBtn" class="btn btn--icon" title="Профиль" aria-label="Профиль">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="8" r="4" />
+              <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
+            </svg>
+          </button>
+          <button id="logoutBtn" class="btn btn--danger btn--sm">Выйти</button>
+        </div>
+      </header>
+
+      <main class="layout">
+        <section class="panel panel--form">
+          <div class="panel__header">
+            <h2>Создать план</h2>
+            <p>Заполните параметры — AI подберёт рацион на день</p>
+          </div>
+
+          <form id="mealPlanForm" class="meal-form">
+            <fieldset class="form-section">
+              <legend>Цель и параметры</legend>
+              <div class="form-grid">
+                <label class="field">
+                  <span>Цель</span>
+                  <select id="goal">
+                    <option value="lose_weight">Похудеть</option>
+                    <option value="gain_muscle">Набрать массу</option>
+                    <option value="maintain">Поддерживать вес</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Пол</span>
+                  <select id="gender">
+                    <option value="male">Мужской</option>
+                    <option value="female">Женский</option>
+                  </select>
+                </label>
+                <label class="field">
+                  <span>Вес, кг</span>
+                  <input type="number" id="weight" value="80" min="30" max="300" />
+                </label>
+                <label class="field">
+                  <span>Рост, см</span>
+                  <input type="number" id="height" value="180" min="100" max="250" />
+                </label>
+                <label class="field">
+                  <span>Возраст</span>
+                  <input type="number" id="age" value="30" min="1" max="120" />
+                </label>
+                <label class="field">
+                  <span>Активность</span>
+                  <select id="activityLevel">
+                    <option value="low">Низкая</option>
+                    <option value="medium" selected>Средняя</option>
+                    <option value="high">Высокая</option>
+                  </select>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset class="form-section">
+              <legend>Аллергии</legend>
+              <div class="chip-group" id="allergiesGroup">
+                <label class="chip"><input type="checkbox" value="milk" /><span>Молоко</span></label>
+                <label class="chip"><input type="checkbox" value="eggs" /><span>Яйца</span></label>
+                <label class="chip"><input type="checkbox" value="peanuts" /><span>Арахис</span></label>
+                <label class="chip"><input type="checkbox" value="tree_nuts" /><span>Орехи</span></label>
+                <label class="chip"><input type="checkbox" value="sesame" /><span>Кунжут</span></label>
+                <label class="chip"><input type="checkbox" value="fish" /><span>Рыба</span></label>
+                <label class="chip"><input type="checkbox" value="shellfish" /><span>Морепродукты</span></label>
+                <label class="chip"><input type="checkbox" value="wheat" /><span>Глютен</span></label>
+                <label class="chip"><input type="checkbox" value="soy" /><span>Соя</span></label>
+              </div>
+            </fieldset>
+
+            <fieldset class="form-section">
+              <legend>Ограничения</legend>
+              <div class="chip-group" id="restrictionsGroup">
+                <label class="chip"><input type="checkbox" value="vegetarian" /><span>Вегетарианец</span></label>
+                <label class="chip"><input type="checkbox" value="vegan" /><span>Веган</span></label>
+                <label class="chip"><input type="checkbox" value="gluten_free" /><span>Без глютена</span></label>
+                <label class="chip"><input type="checkbox" value="lactose_free" /><span>Без лактозы</span></label>
+                <label class="chip"><input type="checkbox" value="keto" /><span>Кето</span></label>
+                <label class="chip"><input type="checkbox" value="halal" /><span>Халяль</span></label>
+                <label class="chip"><input type="checkbox" value="kosher" /><span>Кошер</span></label>
+              </div>
+            </fieldset>
+
+            <button type="submit" id="generateBtn" class="btn btn--primary btn--lg btn--block">
+              <span class="btn__label">Сгенерировать план</span>
+            </button>
+          </form>
+
+          <div id="resultContainer" class="result-card"></div>
+        </section>
+
+        <aside class="panel panel--history">
+          <div class="panel__header">
+            <h2>История</h2>
+            <p>Последние сохранённые планы</p>
+          </div>
+          <div id="historyList" class="history-list">
+            <p class="empty-state">Загрузка…</p>
+          </div>
+        </aside>
+      </main>
+    </div>
+
+    <!-- Profile modal -->
+    <div id="profileModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+      <div class="modal__dialog">
+        <button class="close-modal" aria-label="Закрыть">&times;</button>
+        <h2 id="profileTitle">Настройки профиля</h2>
+
+        <form id="changePasswordForm" class="modal-form">
+          <h3>Смена пароля</h3>
+          <label class="field">
+            <span>Текущий пароль</span>
+            <input type="password" id="oldPassword" autocomplete="current-password" />
+          </label>
+          <label class="field">
+            <span>Новый пароль</span>
+            <input type="password" id="newPassword" autocomplete="new-password" />
+          </label>
+          <button type="submit" class="btn btn--primary btn--block">Обновить пароль</button>
+        </form>
+
+        <form id="changeEmailForm" class="modal-form">
+          <h3>Смена email</h3>
+          <label class="field">
+            <span>Текущий email</span>
+            <input type="email" id="oldEmail" autocomplete="email" />
+          </label>
+          <label class="field">
+            <span>Новый email</span>
+            <input type="email" id="newEmail" autocomplete="email" />
+          </label>
+          <button type="submit" class="btn btn--primary btn--block">Обновить email</button>
+        </form>
+
+        <div id="profileMessage" class="profile-message"></div>
+      </div>
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/meal_plan.js"></script>
+    <script src="js/profile.js"></script>
+  </body>
+</html>
