@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+defaults:
+  run:
+    working-directory: backend
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Prepare test settings
+        run: cp .config/settings.example.yaml .config/settings.yaml
+
+      - name: Ruff
+        run: uv run ruff check src
+
+      - name: Mypy
+        run: uv run mypy src
+
+      - name: Pytest with coverage
+        run: uv run pytest --cov=src --cov-report=term-missing
