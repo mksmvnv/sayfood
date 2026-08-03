@@ -2,6 +2,7 @@ from src.domain.meal_plan.aggregates import MealPlanAggregate
 from src.domain.meal_plan.value_objects import (
     ActivityLevelType,
     AllergenType,
+    GenderType,
     Goal,
     HealthParams,
     RestrictionType,
@@ -26,6 +27,7 @@ def meal_plan_to_model(meal_plan_aggregate: MealPlanAggregate) -> MealPlanModel:
         weight=meal_plan_aggregate.health_params.weight,
         height=meal_plan_aggregate.health_params.height,
         age=meal_plan_aggregate.health_params.age,
+        gender=meal_plan_aggregate.health_params.gender,
         activity_level=meal_plan_aggregate.health_params.activity_level.value,
         allergies=allergies,
         restrictions=restrictions,
@@ -53,6 +55,7 @@ def meal_plan_to_domain(meal_plan_model: MealPlanModel) -> MealPlanAggregate:
             weight=meal_plan_model.weight,
             height=meal_plan_model.height,
             age=meal_plan_model.age,
+            gender=GenderType(meal_plan_model.gender),
             activity_level=ActivityLevelType(meal_plan_model.activity_level),
             allergies=allergies,
             restrictions=restrictions,

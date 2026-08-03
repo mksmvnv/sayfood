@@ -22,25 +22,34 @@ async def generate_meal_plan(goal: Goal, health_params: HealthParams) -> str:
 
     content = None
 
-    async with (
-        aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=settings.llm.timeout)) as session,
-        session.post(
-            url=settings.llm.url,
-            headers={
-                "Authorization": f"Bearer {settings.llm.api_key.get_secret_value()}",
-                "Content-Type": "application/json",
-            },
-            json={
-                "model": settings.llm.model,
-                "messages": [{"role": "user", "content": prompt}],
-            },
-        ) as response,
-    ):
-        response.raise_for_status()
-        data = await response.json()
+    headers = {
+        "Authorization": f"Bearer {settings.llm.api_key.get_secret_value()}",
+        "Content-Type": "application/json",
+        "HTTP-Referer": settings.app.cors_origins[0],
+        "X-Title": settings.app.title,
+    }
 
-        if data.get("choices") and data["choices"][0].get("message", {}).get("content"):
-            content = data["choices"][0]["message"]["content"]
+    try:
+        async with (
+            aiohttp.ClientSession(
+                timeout=aiohttp.ClientTimeout(total=settings.llm.timeout)
+            ) as session,
+            session.post(
+                url=settings.llm.url,
+                headers=headers,
+                json={
+                    "model": settings.llm.model,
+                    "messages": [{"role": "user", "content": prompt}],
+                },
+            ) as response,
+        ):
+            response.raise_for_status()
+            data = await response.json()
+
+            if data.get("choices") and data["choices"][0].get("message", {}).get("content"):
+                content = data["choices"][0]["message"]["content"]
+    except aiohttp.ClientError as exc:
+        raise MealPlanGenerationError() from exc
 
     if content:
         return str(content)

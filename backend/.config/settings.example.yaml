@@ -1,0 +1,29 @@
+app:
+  title: "Sayfood API"
+  cors_origins:
+    - "http://localhost:3000"
+    - "http://127.0.0.1:3000"
+
+cookie:
+  name: "sf_session_id"
+  httponly: true
+  max_age: 604800
+  samesite: "lax"
+  secure: false  # true on production with HTTPS
+
+# Docker Compose: host must be localhost for local development.
+db:
+  url: "postgresql+asyncpg://postgres:postgres@localhost:5432/sayfood"
+  driver: "postgresql"
+  dialect: "asyncpg"
+  user: "postgres"
+  password: "postgres"
+  host: "localhost"
+  port: 5432
+  name: "sayfood"
+
+llm:
+  url: "https://openrouter.ai/api/v1/chat/completions"
+  api_key: "your-openrouter-api-key"
+  model: "deepseek/deepseek-v4-flash"
+  timeout: 60

@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Literal
 
 from pydantic import BaseModel, SecretStr
 
@@ -9,6 +10,7 @@ class ApplicationSettings(BaseModel):
     """Application settings."""
 
     title: str
+    cors_origins: list[str]
 
 
 class CookieSettings(BaseModel):
@@ -17,6 +19,8 @@ class CookieSettings(BaseModel):
     name: str
     httponly: bool
     max_age: int  # Seconds
+    samesite: Literal["lax", "strict", "none"] = "lax"
+    secure: bool = False
 
 
 class DatabaseSettings(BaseModel):

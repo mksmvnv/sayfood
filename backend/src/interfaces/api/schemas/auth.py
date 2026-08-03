@@ -1,6 +1,20 @@
+from datetime import date, datetime
 from uuid import UUID
 
 from pydantic import BaseModel, EmailStr, Field
+
+
+class UserResponse(BaseModel):
+    """User response schema."""
+
+    id: UUID
+    email: EmailStr
+    is_active: bool
+    is_admin: bool
+    is_premium: bool
+    daily_requests: int
+    last_request_date: date | None
+    created_at: datetime
 
 
 class UserRegisterRequest(BaseModel):

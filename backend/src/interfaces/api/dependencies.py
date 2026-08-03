@@ -10,13 +10,25 @@ from src.application.auth import (
     UserLogoutUseCase,
     UserRegisterUseCase,
 )
-from src.application.meal_plan import MealPlanGenerationUseCase
+from src.application.meal_plan import (
+    MealPlanGenerationUseCase,
+    MealPlanHistoryUseCase,
+    MealPlanRemainingUseCase,
+)
+from src.domain.user.repositories import UserRepository
 from src.infrastructure.auth.hasher import PasswordHasher
 from src.infrastructure.database.base import get_async_session
 from src.infrastructure.database.repositories import (
     SQLAlchemyMealPlanRepository,
     SQLAlchemyUserRepository,
 )
+
+
+async def get_user_repository(
+    session: Annotated[AsyncSession, Depends(get_async_session)],
+) -> UserRepository:
+    """Get user repository."""
+    return SQLAlchemyUserRepository(session)
 
 
 async def get_user_register_use_case(
@@ -69,3 +81,20 @@ async def get_meal_plan_generation_use_case(
     user_repository = SQLAlchemyUserRepository(session)
     meal_plan_repository = SQLAlchemyMealPlanRepository(session)
     return MealPlanGenerationUseCase(user_repository, meal_plan_repository)
+
+
+async def get_meal_plan_history_use_case(
+    session: Annotated[AsyncSession, Depends(get_async_session)],
+) -> MealPlanHistoryUseCase:
+    """Get meal plan history use case."""
+    user_repository = SQLAlchemyUserRepository(session)
+    meal_plan_repository = SQLAlchemyMealPlanRepository(session)
+    return MealPlanHistoryUseCase(user_repository, meal_plan_repository)
+
+
+async def get_meal_plan_remaining_use_case(
+    session: Annotated[AsyncSession, Depends(get_async_session)],
+) -> MealPlanRemainingUseCase:
+    """Get meal plan remaining use case."""
+    user_repository = SQLAlchemyUserRepository(session)
+    return MealPlanRemainingUseCase(user_repository)

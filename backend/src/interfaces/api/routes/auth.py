@@ -9,6 +9,8 @@ from src.application.auth import (
     UserLogoutUseCase,
     UserRegisterUseCase,
 )
+from src.domain.user.exceptions import SessionNotFound, UserNotFound
+from src.domain.user.repositories import UserRepository
 from src.infrastructure.config.settings import settings
 from src.interfaces.api.dependencies import (
     get_user_change_email_use_case,
@@ -16,6 +18,7 @@ from src.interfaces.api.dependencies import (
     get_user_login_use_case,
     get_user_logout_use_case,
     get_user_register_use_case,
+    get_user_repository,
 )
 from src.interfaces.api.schemas.auth import (
     UserChangeEmailRequest,
@@ -27,6 +30,7 @@ from src.interfaces.api.schemas.auth import (
     UserLogoutResponse,
     UserRegisterRequest,
     UserRegisterResponse,
+    UserResponse,
 )
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -62,6 +66,8 @@ async def login(
         value=user_login_dto.session_token,
         httponly=settings.cookie.httponly,
         max_age=settings.cookie.max_age,
+        samesite=settings.cookie.samesite,
+        secure=settings.cookie.secure,
     )
     return UserLoginResponse(
         id=user_login_dto.id,
@@ -83,6 +89,33 @@ async def logout(
     await user_logout_use_case.execute(session_token)
     response.delete_cookie(session_name)
     return UserLogoutResponse()
+
+
+@router.get("/me", response_model=UserResponse)
+async def get_current_user(
+    request: Request,
+    user_repository: Annotated[UserRepository, Depends(get_user_repository)],
+) -> UserResponse:
+    """Get current user."""
+    session_name = settings.cookie.name
+    session_token = request.cookies.get(session_name)
+    if not session_token:
+        raise SessionNotFound()
+
+    user = await user_repository.get_by_session_token(session_token)
+    if not user:
+        raise UserNotFound()
+
+    return UserResponse(
+        id=user.id,
+        email=user.email.to_raw(),
+        is_active=user.is_active,
+        is_admin=user.is_admin,
+        is_premium=user.is_premium,
+        daily_requests=user.daily_requests,
+        last_request_date=user.last_request_date,
+        created_at=user.created_at,
+    )
 
 
 @router.post("/me/password", response_model=UserChangePasswordResponse)

@@ -4,6 +4,7 @@ from src.domain.meal_plan.repositories import MealPlanRepository
 from src.domain.meal_plan.value_objects import (
     ActivityLevelType,
     AllergenType,
+    GenderType,
     Goal,
     HealthParams,
     RestrictionType,
@@ -36,6 +37,7 @@ class MealPlanGenerationUseCase:
         weight: float,
         height: float,
         age: int,
+        gender: str,
         activity_level: str,
         allergies: list[str] | None = None,
         restrictions: list[str] | None = None,
@@ -71,6 +73,7 @@ class MealPlanGenerationUseCase:
             weight=weight,
             height=height,
             age=age,
+            gender=GenderType(gender),
             activity_level=ActivityLevelType(activity_level),
             allergies=allergies_enum,
             restrictions=restrictions_enum,
@@ -82,6 +85,7 @@ class MealPlanGenerationUseCase:
         # Create domain meal plan
         meal_plan = MealPlanAggregate.create(
             user_id=user.id,
+            goal=goal_vo,
             health_params=health_params_vo,
             plan=plan_text,
         )

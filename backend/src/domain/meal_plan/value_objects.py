@@ -14,6 +14,13 @@ from src.domain.meal_plan.exceptions import (
 from src.domain.seedwork.value_objects import ValueObject
 
 
+class GenderType(StrEnum):
+    """Gender type enum."""
+
+    MALE = "male"
+    FEMALE = "female"
+
+
 class GoalType(StrEnum):
     """Goal type enum."""
 
@@ -85,6 +92,7 @@ class HealthParams:
     weight: float
     height: float
     age: int
+    gender: GenderType
     activity_level: ActivityLevelType
     allergies: list[AllergenType] | None = None
     restrictions: list[RestrictionType] | None = None
