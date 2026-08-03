@@ -1,0 +1,10 @@
+# TLS overlay: Caddy on :80/:443, frontend only internal.
+# Usage:
+#   docker compose -f docker-compose.prod.yml -f docker-compose.prod.tls.yml --profile tls up -d --build
+
+services:
+  frontend:
+    ports: []
+
+  caddy:
+    profiles: ["tls"]

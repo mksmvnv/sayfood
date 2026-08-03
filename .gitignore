@@ -1,0 +1,17 @@
+.venv
+__pycache__
+*.pyc
+.mypy_cache
+.ruff_cache
+.pytest_cache
+htmlcov/
+.coverage
+*.egg-info
+
+# Secrets — never commit
+backend/.config/settings.yaml
+.env
+.env.*
+
+# Local caches
+backend/pytest-cache-files-*/
