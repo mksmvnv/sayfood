@@ -1,0 +1,8 @@
+# Copy to deploy/Caddyfile and replace the domain.
+# Start with: docker compose -f docker-compose.prod.yml --profile tls up -d --build
+#
+# Note: with --profile tls, Caddy binds ports 80/443. Stop any other service on 80 first.
+
+your-domain.example.com {
+    reverse_proxy frontend:80
+}

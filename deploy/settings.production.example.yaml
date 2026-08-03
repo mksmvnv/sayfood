@@ -1,0 +1,29 @@
+app:
+  title: "Sayfood API"
+  cors_origins:
+    - "http://YOUR_SERVER_IP"
+    # - "https://your-domain.com"
+
+cookie:
+  name: "sf_session_id"
+  httponly: true
+  max_age: 604800
+  samesite: "lax"
+  secure: false  # set true when using HTTPS (Caddy profile)
+
+# Docker Compose rewrites localhost → db inside the backend container.
+db:
+  url: "postgresql+asyncpg://postgres:CHANGE_ME_STRONG_PASSWORD@localhost:5432/sayfood"
+  driver: "postgresql"
+  dialect: "asyncpg"
+  user: "postgres"
+  password: "CHANGE_ME_STRONG_PASSWORD"
+  host: "localhost"
+  port: 5432
+  name: "sayfood"
+
+llm:
+  url: "https://openrouter.ai/api/v1/chat/completions"
+  api_key: "your-openrouter-api-key"
+  model: "deepseek/deepseek-v4-flash"
+  timeout: 60
