@@ -1,0 +1,50 @@
+---
+description: Backend layered architecture and coding patterns
+globs: backend/**/*.py
+alwaysApply: false
+---
+
+# Backend architecture
+
+Follow **DDD-lite layered architecture**. Dependencies flow inward only:
+
+`interfaces → application → domain ← infrastructure`
+
+## Adding a feature (order)
+
+1. **Domain** — value objects, aggregate methods, domain exceptions, repository ABC methods if needed.
+2. **Application** — use case class with `execute()`, DTO dataclass for return value.
+3. **Infrastructure** — mapper changes, SQLAlchemy repository impl, external service (LLM/auth).
+4. **Interfaces** — Pydantic schema, thin route calling use case via `Depends`, register in `dependencies.py`.
+
+## Conventions
+
+- Use cases: one public method `execute()`, constructor injection of repositories/services.
+- Domain exceptions extend `DomainException`; map them in `exception_handlers.EXCEPTION_STATUS_MAP`.
+- Routes read session cookie via `settings.cookie.name`; pass token to use case — no business logic in routes.
+- Repository interfaces live in `domain/*/repositories.py`; implementations in `infrastructure/database/repositories/`.
+- Mappers: `*_to_model` / `*_to_domain` in `infrastructure/database/mappers/`.
+- Google-style docstrings on public classes and methods (ruff pydocstyle).
+- Line length 100, double quotes, strict mypy — run `make check`.
+
+## Example use case shape
+
+```python
+class SomeUseCase:
+    def __init__(self, user_repository: UserRepository) -> None:
+        self.user_repository = user_repository
+
+    async def execute(self, session_token: str | None, ...) -> SomeDTO:
+        if session_token is None:
+            raise SessionNotFound()
+        user = await self.user_repository.get_by_session_token(session_token)
+        ...
+        return SomeDTO(...)
+```
+
+## Do not
+
+- Put SQL or HTTP calls in domain or application layers.
+- Skip the use case and call repositories directly from routes.
+- Add env vars or duplicate config outside `settings.yaml`.
+- Break existing exception → HTTP status mapping without updating tests.

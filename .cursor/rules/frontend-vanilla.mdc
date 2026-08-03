@@ -1,0 +1,37 @@
+---
+description: Frontend vanilla JS patterns and API integration
+globs: frontend/**/*
+alwaysApply: false
+---
+
+# Frontend (vanilla JS)
+
+No frameworks — HTML/CSS/JS only. Match existing structure in `frontend/src/`.
+
+## Files
+
+- `index.html` — markup only
+- `css/style.css` — design tokens, components
+- `js/config.js` — `window.APP_CONFIG.apiBase` (`/api` in Docker, `http://localhost:8000` locally)
+- `js/api.js` — shared `apiRequest()` with `credentials: 'include'`
+- `js/auth.js`, `js/meal_plan.js`, `js/profile.js`, `js/utils.js` — feature modules
+
+## API calls
+
+- Docker: requests go to `/api/...` (nginx proxy).
+- Local dev: `api.js` falls back to `http://localhost:8000` when placeholder not replaced.
+- Always use `apiRequest()` — do not duplicate fetch logic.
+- Session auth is cookie-based (`sf_session_id`); no manual token storage except display email in `localStorage`.
+
+## UI conventions
+
+- Auth overlay until logged in; main `#app` hidden until session valid.
+- Check session on load via `GET /auth/me`.
+- Use existing CSS variables and component classes — extend `style.css`, do not inline styles.
+- Russian UI copy.
+
+## New UI features
+
+- Add DOM to `index.html`, styles to `style.css`, logic to the appropriate `js/` module.
+- Handle loading/error states; reuse `showToast()` from `utils.js` when appropriate.
+- If adding a new backend endpoint, backend tests are required (see `backend-testing.mdc`).

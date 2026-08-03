@@ -1,0 +1,56 @@
+---
+description: Mandatory backend tests — 100% coverage gate on every feature
+globs: backend/**/*.py
+alwaysApply: false
+---
+
+# Backend testing (required)
+
+**Every new/changed backend behavior must have tests.** CI gate: **100% coverage on `src/`** (`fail_under = 100` in `pyproject.toml`).
+
+## When to add tests
+
+| Change | Required tests |
+|--------|----------------|
+| New use case | Unit test with fake repositories; all guard branches + happy path |
+| Domain aggregate/VO logic | Unit test in `tests/domain/` |
+| New/changed repository method | Integration test with `db_session` fixture (SQLite in-memory) |
+| New route | API test with `dependency_overrides` + assert status/body/cookies |
+| New exception type | Assert status code in exception handler test |
+| Mapper change | Round-trip test domain ↔ model |
+
+## Structure
+
+Mirror `src/` under `backend/tests/`:
+
+```
+tests/domain/
+tests/application/
+tests/infrastructure/
+tests/interfaces/
+tests/conftest.py   ← fakes, factories, db_session
+```
+
+## Patterns
+
+- **Use cases**: `FakeUserRepository`, `FakeMealPlanRepository` from `conftest.py`; mock LLM via `@patch("...generate_meal_plan")`.
+- **Repositories**: use `db_session` fixture; for expiry checks use `sqlite_utc_now` fixture (naive datetimes).
+- **Routes**: override FastAPI deps on `app.dependency_overrides`; use `TestClient` or `httpx.AsyncClient`.
+- **Exception handler**: call handler directly with each `EXCEPTION_STATUS_MAP` entry.
+- Tests omit pydocstrings (`D` ignored for `tests/**`).
+
+## Commands
+
+```bash
+cd backend
+make test          # pytest
+make test-cov      # pytest + 100% coverage gate
+make check         # ruff + mypy
+```
+
+## Definition of done (backend)
+
+- [ ] Tests added/updated for all new branches
+- [ ] `make test-cov` passes (100%)
+- [ ] `make check` passes
+- [ ] No unrelated files changed

@@ -1,0 +1,44 @@
+---
+description: SayFood project context and agent workflow (always read first)
+alwaysApply: true
+---
+
+# SayFood — project rules
+
+AI meal planner: **FastAPI backend**, **vanilla JS frontend**, **PostgreSQL**, **OpenRouter**.
+
+## Before coding
+
+1. Read existing code in the same layer and mirror its patterns — do not invent a new style.
+2. Every **new feature or behavior change** in backend must include **tests** (see `backend-testing.mdc`).
+3. After backend changes run: `cd backend && make check && make test-cov`.
+4. Keep diffs minimal — only what the task requires.
+
+## Configuration
+
+- Single source of truth: `backend/.config/settings.yaml` (gitignored).
+- Template for new setups: `backend/.config/settings.example.yaml`.
+- **No `.env`** — do not introduce env-based config overrides.
+- Docker mounts `settings.yaml` and entrypoint rewrites `db.host` `localhost` → `db`.
+
+## Repo layout
+
+```
+backend/src/domain/          → entities, aggregates, value objects, repository ABCs
+backend/src/application/     → use cases + DTOs
+backend/src/infrastructure/  → DB, auth, LLM, mappers, settings
+backend/src/interfaces/api/  → FastAPI routes, schemas, dependencies
+frontend/src/                → vanilla HTML/CSS/JS (no framework)
+```
+
+## Docker / Make
+
+- Root: `make up`, `make down`, `make test`
+- Local backend: `cd backend && make run`
+- Local frontend: `cd frontend && make run` (port 3000)
+- Docker frontend proxies `/api/*` → backend
+
+## Docs
+
+- Requirements: `docs/requirements.md`
+- Architecture: `docs/architecture.md`
